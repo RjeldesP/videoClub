@@ -1,0 +1,17 @@
+﻿
+@model VideoClub.Models.Movie
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+  <ul>
+      <li>Name: @Model.Name</li>
+      <li>Genners : @Model.Gender.Name</li>
+      <li>Date Add : @Model.DateAdded</li>
+      <li>Release Add : @Model.ReleaseDate</li>
+      <li>Stock : @Model.NumberInStock</li>
+  </ul>
+
