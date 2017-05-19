@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using VideoClub.ViewModels;
 using VideoClub.Models;
+using System;
 
 namespace VideoClub.Controllers
 {
@@ -22,6 +23,15 @@ namespace VideoClub.Controllers
         }
 
 
+        public ActionResult New()
+        {
+            var gener = DbContex.gender.ToList();
+            var viewModel = new MovieFormViewModel
+            {
+                Gender = gener
+            };
+            return View("MovieForm", viewModel);
+        }
         public ViewResult Index()
         {
             //var movies = GetMovies();
@@ -29,6 +39,20 @@ namespace VideoClub.Controllers
 
             return View(movies);    
         }
+        public ActionResult Edit(int id)
+        {
+            var movie = DbContex.Movies.SingleOrDefault(c => c.Id == id);
+            if(movie == null)
+
+            return HttpNotFound();
+            var viewModel = new MovieFormViewModel
+            {
+                Movie = movie,
+                Gender = DbContex.gender.ToList()
+            };
+            return View("MovieForm", viewModel);
+        }
+
 
         public ActionResult Details(int id)
         {
@@ -37,6 +61,27 @@ namespace VideoClub.Controllers
                 return HttpNotFound();
 
             return View(movie);
+        }
+
+        [HttpPost]
+        public ActionResult Save(Movie movie)
+        {
+            if(movie.Id == 0)
+            {
+                movie.DateAdded = DateTime.Now;
+                DbContex.Movies.Add(movie);
+
+            }
+            else
+            {
+                var movieInDb = DbContex.Movies.Single(m => m.Id == movie.Id);
+                movieInDb.Name = movie.Name;
+                movieInDb.GenderId = movie.GenderId;
+                movieInDb.NumberInStock = movie.NumberInStock;
+                movie.ReleaseDate = movie.ReleaseDate;
+            }
+            DbContex.SaveChanges();
+            return RedirectToAction("Index","Movies");
         }
 
         //private IEnumerable<Movie> GetMovies()
